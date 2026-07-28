@@ -1,6 +1,6 @@
 import heroBg from "@/assets/images/hero/hero-bg.jpg";
 
-import HeroContent from "./HeroContent";
+import HeroContentDesktop from "./HeroContentDesktop";
 import HeroImage from "./HeroImage";
 
 export default function HeroDesktop() {
@@ -45,9 +45,9 @@ export default function HeroDesktop() {
               justify-center
             "
           >
-            <div className="w-full max-w-[620px]">
+            <div className="w-full max-w-155">
 
-              <HeroContent />
+              <HeroContentDesktop />
 
             </div>
           </div>

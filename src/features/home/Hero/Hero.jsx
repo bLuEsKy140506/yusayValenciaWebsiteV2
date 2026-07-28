@@ -1,15 +1,13 @@
-import HeroDesktop from "./HeroDesktop";
-import HeroMobile from "./HeroMobile";
+import HeroDesktop from "./HeroDesktop/HeroDesktop";
+import HeroMobile from "./HeroMobile/HeroMobile";
 
 export default function Hero() {
   return (
     <>
-      {/* Desktop */}
       <div className="hidden lg:block">
         <HeroDesktop />
       </div>
 
-      {/* Mobile / Tablet */}
       <div className="lg:hidden">
         <HeroMobile />
       </div>

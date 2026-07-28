@@ -1,9 +1,14 @@
 export default function Button({
   children,
   variant = "primary",
+  className = "",
+  type = "button",
   ...props
 }) {
-  const styles = {
+  const baseStyles =
+    "inline-flex items-center justify-center rounded-xl px-6 py-3 font-semibold transition-all duration-300";
+
+  const variants = {
     primary:
       "bg-[#28352E] text-white hover:opacity-90",
 
@@ -16,7 +21,8 @@ export default function Button({
 
   return (
     <button
-      className={`rounded-lg px-6 py-3 font-semibold transition ${styles[variant]}`}
+      type={type}
+      className={`${baseStyles} ${variants[variant]} ${className}`}
       {...props}
     >
       {children}
