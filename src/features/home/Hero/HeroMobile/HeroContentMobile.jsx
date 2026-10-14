@@ -76,7 +76,7 @@ export default function HeroContentMobile() {
 
         <div className="mt-6 space-y-3">
 
-          <Button className="w-full">
+          <Button to="/apply" className="w-full">
             Apply Now
           </Button>
 

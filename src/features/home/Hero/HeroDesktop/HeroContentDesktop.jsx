@@ -157,7 +157,7 @@ export default function HeroContent() {
           lg:justify-start
         "
       >
-        <Button>
+        <Button to="/apply">
           Apply Now
         </Button>
 

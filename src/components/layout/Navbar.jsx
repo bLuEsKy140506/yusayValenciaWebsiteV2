@@ -1,6 +1,7 @@
 import Logo from "./Logo";
 import NavLinks from "./NavLinks";
 import MobileMenu from "./MobileMenu";
+import Button from "@/components/ui/Button";
 
 import colors from "@/constants/colors";
 
@@ -18,21 +19,9 @@ export default function Navbar() {
         <div className="flex items-center gap-6">
           <NavLinks />
 
-          <button
-            className="hidden cursor-pointer rounded-xl px-6 py-3 font-semibold transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg lg:block"
-            style={{
-              backgroundColor: colors.primary,
-              color: colors.white,
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.backgroundColor = colors.primaryDark;
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.backgroundColor = colors.primary;
-            }}
-          >
+          <Button to="/apply" className="hidden lg:inline-flex hover:-translate-y-0.5 hover:shadow-lg">
             Apply Now
-          </button>
+          </Button>
 
           <MobileMenu />
         </div>

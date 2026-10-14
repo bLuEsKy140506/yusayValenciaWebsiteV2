@@ -3,7 +3,7 @@ const company = {
   branch: "Valencia Branch",
   slogan: "Fast and Personalized Service",
   interestRate: "1% per month",
-  phone: "(088) 828-4163",
+  phone: "09171808551",
 };
 
 export default company;

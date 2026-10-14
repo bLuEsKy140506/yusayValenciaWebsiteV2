@@ -1,8 +1,11 @@
+import { Link } from "react-router-dom";
+
 export default function Button({
   children,
   variant = "primary",
   className = "",
   type = "button",
+  to,
   ...props
 }) {
   const baseStyles =
@@ -19,13 +22,11 @@ export default function Button({
       "bg-[#E53935] text-white hover:opacity-90",
   };
 
-  return (
-    <button
-      type={type}
-      className={`${baseStyles} ${variants[variant]} ${className}`}
-      {...props}
-    >
-      {children}
-    </button>
-  );
+  const classes = `${baseStyles} ${variants[variant]} ${className}`;
+
+  if (to) {
+    return <Link to={to} className={classes} {...props}>{children}</Link>;
+  }
+
+  return <button type={type} className={classes} {...props}>{children}</button>;
 }
