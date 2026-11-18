@@ -2,9 +2,9 @@
 
 The website sends callback requests through a Vercel Function and Resend. Applicant details are emailed to `ebutlay@ycfc.com.ph` and are not stored in the website database. Resend and Turnstile secret keys stay in Vercel environment variables.
 
-## 1. Deploy the site once
+## 1. Use the existing Vercel deployment
 
-Import this GitHub repository into Vercel and deploy it. Vercel creates a project URL ending in `.vercel.app`. You do not need to know or choose that URL in advance.
+The site is already deployed at `https://yusay-valencia-website-v2.vercel.app/`. Use the hostname `yusay-valencia-website-v2.vercel.app` when configuring Turnstile.
 
 ## 2. Set up Resend
 
@@ -15,13 +15,13 @@ Import this GitHub repository into Vercel and deploy it. Vercel creates a projec
 
 Resend requires a verified domain before it can send email from that domain. See [Resend’s verified-domain guide](https://resend.com/docs/dashboard/domains/introduction).
 
-## 3. Set up Turnstile after the first Vercel deployment
+## 3. Set up Turnstile for the deployed site
 
 1. Create a Cloudflare Turnstile widget.
-2. Add the Vercel hostname shown on the deployment page to its allowed hostnames. Add any custom domain later, after you attach one.
+2. Add `yusay-valencia-website-v2.vercel.app` to its allowed hostnames. Add any custom domain later, after you attach one.
 3. Copy the public site key and secret key from Cloudflare.
 
-The website URL is needed for this step, so it is fine to wait until Vercel has deployed the site. The server verifies each Turnstile token before sending email. See [Cloudflare’s server-side validation guide](https://developers.cloudflare.com/turnstile/get-started/server-side-validation/).
+The server verifies each Turnstile token before sending email. See [Cloudflare’s server-side validation guide](https://developers.cloudflare.com/turnstile/get-started/server-side-validation/).
 
 ## 4. Add Vercel environment variables
 
