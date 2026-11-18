@@ -1,6 +1,6 @@
 # Email callback form setup for Vercel
 
-The website sends callback requests through a Vercel Function and Resend. Applicant details are emailed to `ebutlay@ycfc.com.ph` and are not stored in the website database. Resend and Turnstile secret keys stay in Vercel environment variables.
+The website sends callback requests through a Vercel Function and Resend. Applicant details are emailed to `earl0bluesky142226@gmail.com` and are not stored in the website database. Resend and Turnstile secret keys stay in Vercel environment variables.
 
 ## 1. Use the existing Vercel deployment
 
@@ -29,7 +29,7 @@ In Vercel, open the project’s **Settings → Environment Variables** and add t
 
 | Variable | Value |
 | --- | --- |
-| `APPLICATION_INBOX` | `ebutlay@ycfc.com.ph` |
+| `APPLICATION_INBOX` | `earl0bluesky142226@gmail.com` |
 | `RESEND_API_KEY` | The Resend sending-only key |
 | `RESEND_FROM_EMAIL` | A sender address on the verified domain |
 | `TURNSTILE_SECRET_KEY` | The Cloudflare Turnstile secret key |

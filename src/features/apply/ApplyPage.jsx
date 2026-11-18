@@ -205,7 +205,7 @@ export default function ApplyPage() {
               <div className="flex items-start gap-2 rounded-xl bg-[#F5F8F5] px-3 py-2 text-xs leading-4 text-gray-600">
                 <HiLockClosed className="mt-0.5 h-3.5 w-3.5 shrink-0 text-green-700" aria-hidden="true" />
                 <p>Your details will be emailed to {" "}
-                  <span className="font-semibold text-gray-700">ebutlay@ycfc.com.ph</span>. Don’t include account numbers, passwords, or ID document details.
+                  <span className="font-semibold text-gray-700">earl0bluesky142226@gmail.com</span>. Don’t include account numbers, passwords, or ID document details.
                 </p>
               </div>
 
