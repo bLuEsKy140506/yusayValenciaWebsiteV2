@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { HiArrowRight, HiCheckCircle, HiLockClosed, HiPhone } from "react-icons/hi2";
 
 import Button from "@/components/ui/Button";
@@ -12,11 +12,101 @@ const benefits = [
 ];
 
 export default function ApplyPage() {
-  const [notice, setNotice] = useState(false);
+  const [status, setStatus] = useState({ type: "idle", message: "" });
+  const [captchaToken, setCaptchaToken] = useState("");
+  const captchaContainer = useRef(null);
+  const captchaWidget = useRef(null);
+  const turnstileSiteKey = import.meta.env.VITE_TURNSTILE_SITE_KEY;
 
-  function handleSubmit(event) {
+  useEffect(() => {
+    if (!turnstileSiteKey || !captchaContainer.current) return undefined;
+
+    const renderCaptcha = () => {
+      if (!window.turnstile || !captchaContainer.current || captchaWidget.current) return;
+
+      captchaWidget.current = window.turnstile.render(captchaContainer.current, {
+        sitekey: turnstileSiteKey,
+        callback: (token) => setCaptchaToken(token),
+        "expired-callback": () => setCaptchaToken(""),
+        "error-callback": () => setCaptchaToken(""),
+      });
+    };
+
+    const scriptUrl = "https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit";
+    let script = document.querySelector(`script[src="${scriptUrl}"]`);
+    const addedScript = !script;
+
+    if (!script) {
+      script = document.createElement("script");
+      script.src = scriptUrl;
+      script.async = true;
+      script.defer = true;
+      document.head.appendChild(script);
+    }
+
+    if (window.turnstile) {
+      renderCaptcha();
+    } else {
+      script.addEventListener("load", renderCaptcha, { once: true });
+    }
+
+    return () => {
+      script?.removeEventListener("load", renderCaptcha);
+      if (captchaWidget.current && window.turnstile) {
+        window.turnstile.remove(captchaWidget.current);
+        captchaWidget.current = null;
+      }
+      if (addedScript && script?.isConnected) script.remove();
+    };
+  }, [turnstileSiteKey]);
+
+  async function handleSubmit(event) {
     event.preventDefault();
-    setNotice(true);
+    if (!turnstileSiteKey || !captchaToken) {
+      setStatus({
+        type: "error",
+        message: "Secure email setup is not complete yet. Please call the Valencia team instead.",
+      });
+      return;
+    }
+
+    setStatus({ type: "sending", message: "Sending your request…" });
+    const form = event.currentTarget;
+    const formData = new FormData(form);
+
+    try {
+      const response = await fetch("/api/send-callback-request", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: formData.get("name"),
+          phone: formData.get("phone"),
+          email: formData.get("email"),
+          loanType: formData.get("loanType"),
+          website: formData.get("website"),
+          consent: formData.get("consent") === "on",
+          turnstileToken: captchaToken,
+        }),
+      });
+
+      const result = await response.json().catch(() => ({}));
+      if (!response.ok) throw new Error(result.error || "Email delivery failed.");
+
+      setStatus({
+        type: "success",
+        message: "Your callback request has been sent. The Valencia team will be in touch.",
+      });
+      form.reset();
+      setCaptchaToken("");
+      window.turnstile?.reset(captchaWidget.current);
+    } catch {
+      setStatus({
+        type: "error",
+        message: "We couldn’t send your request. Please try again or call the Valencia team.",
+      });
+      setCaptchaToken("");
+      window.turnstile?.reset(captchaWidget.current);
+    }
   }
 
   return (
@@ -41,6 +131,14 @@ export default function ApplyPage() {
             </div>
 
             <form className="space-y-3" onSubmit={handleSubmit}>
+              <input
+                aria-hidden="true"
+                autoComplete="off"
+                className="absolute -left-[10000px]"
+                name="website"
+                tabIndex={-1}
+                type="text"
+              />
               <div className="grid gap-3 sm:grid-cols-2">
                 <div>
                   <label htmlFor="applicant-name" className="mb-1 block text-xs font-semibold text-gray-800">
@@ -106,27 +204,56 @@ export default function ApplyPage() {
 
               <div className="flex items-start gap-2 rounded-xl bg-[#F5F8F5] px-3 py-2 text-xs leading-4 text-gray-600">
                 <HiLockClosed className="mt-0.5 h-3.5 w-3.5 shrink-0 text-green-700" aria-hidden="true" />
-                <p>Please don’t include account numbers, passwords, or ID document details.</p>
+                <p>Your details will be emailed to {" "}
+                  <span className="font-semibold text-gray-700">ebutlay@ycfc.com.ph</span>. Don’t include account numbers, passwords, or ID document details.
+                </p>
               </div>
 
-              <Button type="submit" className="w-full gap-2 py-3 text-sm shadow-md hover:-translate-y-0.5 hover:shadow-lg">
-                Request a callback
-                <HiArrowRight aria-hidden="true" />
+              <label className="flex items-start gap-2 text-xs leading-4 text-gray-600">
+                <input className="mt-0.5 accent-green-700" name="consent" required type="checkbox" />
+                <span>I agree that YCFC may use these details to respond to this inquiry.</span>
+              </label>
+
+              {turnstileSiteKey ? (
+                <div className="min-h-[65px]" ref={captchaContainer} />
+              ) : (
+                <p className="rounded-lg bg-amber-50 px-3 py-2 text-xs leading-4 text-amber-900">
+                  Secure online requests are being set up. You can still call {company.phone}.
+                </p>
+              )}
+
+              <Button
+                type="submit"
+                disabled={status.type === "sending" || !turnstileSiteKey || !captchaToken}
+                className="w-full gap-2 py-3 text-sm shadow-md hover:-translate-y-0.5 hover:shadow-lg disabled:cursor-not-allowed disabled:opacity-50"
+              >
+                {status.type === "sending" ? "Sending request…" : "Request a callback"}
+                {status.type !== "sending" && <HiArrowRight aria-hidden="true" />}
               </Button>
 
-              {notice && (
-                <div role="status" className="rounded-xl border border-amber-200 bg-amber-50 p-4 text-sm leading-6 text-amber-950">
-                  This form is not connected yet, so your details have not been sent. Please call{" "}
-                  <a className="font-bold underline" href={`tel:${company.phone.replace(/[^\d+]/g, "")}`}>
-                    {company.phone}
-                  </a>{" "}
-                  to speak with the Valencia team.
+              {status.message && (
+                <div
+                  role={status.type === "error" ? "alert" : "status"}
+                  className={`rounded-xl p-3 text-sm leading-5 ${
+                    status.type === "success"
+                      ? "border border-green-200 bg-green-50 text-green-900"
+                      : status.type === "error"
+                        ? "border border-red-200 bg-red-50 text-red-900"
+                        : "bg-gray-50 text-gray-700"
+                  }`}
+                >
+                  {status.message}{" "}
+                  {status.type === "error" && (
+                    <a className="font-bold underline" href={`tel:${company.phone.replace(/[^\d+]/g, "")}`}>
+                      Call {company.phone}
+                    </a>
+                  )}
                 </div>
               )}
             </form>
 
             <p className="mt-3 text-center text-[11px] leading-4 text-gray-500">
-              By continuing, you’re asking the team to contact you. No loan is approved through this form.
+              No loan is approved through this form. Availability, rates, and terms are subject to assessment.
             </p>
           </div>
 
@@ -166,7 +293,7 @@ export default function ApplyPage() {
             </div>
 
             <p className="text-xs leading-4 text-gray-500">
-              Loan availability, qualification, rates, and terms are subject to assessment by the company.
+              Your request is an initial inquiry; the company will confirm any applicable terms with you.
             </p>
           </aside>
         </div>

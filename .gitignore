@@ -12,6 +12,11 @@ dist
 dist-ssr
 *.local
 
+# Local environment files. Keep the example template in version control.
+.env
+.env.*
+!.env.example
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json

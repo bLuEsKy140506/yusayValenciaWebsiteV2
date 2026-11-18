@@ -19,9 +19,11 @@ export default function Navbar() {
         <div className="flex items-center gap-6">
           <NavLinks />
 
-          <Button to="/apply" className="hidden lg:inline-flex hover:-translate-y-0.5 hover:shadow-lg">
-            Apply Now
-          </Button>
+          <div className="hidden lg:block">
+            <Button to="/apply" className="hover:-translate-y-0.5 hover:shadow-lg">
+              Apply Now
+            </Button>
+          </div>
 
           <MobileMenu />
         </div>
